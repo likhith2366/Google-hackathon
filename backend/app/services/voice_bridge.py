@@ -143,11 +143,21 @@ class VoiceBridge:
         for fc in tool_call.function_calls:
             if fc.name == "lookup_building":
                 args = dict(fc.args)
-                data = await fetch_all(
-                    house_number=args["house_number"],
-                    street_name=args["street_name"],
-                    borough=args["borough"],
-                )
+                try:
+                    data = await asyncio.wait_for(
+                        fetch_all(
+                            house_number=args["house_number"],
+                            street_name=args["street_name"],
+                            borough=args["borough"],
+                            limit=20,
+                        ),
+                        timeout=6.0,
+                    )
+                except asyncio.TimeoutError:
+                    data = {
+                        "violations": [], "complaints": [], "litigations": [],
+                        "data_warning": True,
+                    }
                 risk = compute_risk(data["violations"], data["litigations"])
                 result = {
                     "risk_level": risk.caution_level,

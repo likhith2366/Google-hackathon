@@ -15,14 +15,14 @@ async def _fetch_dataset(
     """Fetch one Socrata dataset. Returns (data, errored)."""
     url = f"{SOCRATA_BASE_URL}/{dataset_id}.json"
     try:
-        response = await client.get(url, params=params, timeout=10.0)
+        response = await client.get(url, params=params, timeout=5.0)
         response.raise_for_status()
         return response.json(), False
     except Exception:
         return [], True
 
 
-async def fetch_all(house_number: str, street_name: str, borough: str) -> dict:
+async def fetch_all(house_number: str, street_name: str, borough: str, limit: int = 100) -> dict:
     """
     Fetch HPD violations, DOB complaints, and HPD litigations in parallel.
 
@@ -40,6 +40,7 @@ async def fetch_all(house_number: str, street_name: str, borough: str) -> dict:
     hn_numeric = hn.rstrip("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
     auth = (settings.NYC_OPEN_DATA_KEY_ID, settings.NYC_OPEN_DATA_KEY_SECRET)
+    lit_limit = max(1, limit // 2)
 
     async with httpx.AsyncClient(auth=auth) as client:
         violations_coro = _fetch_dataset(client, HPD_VIOLATIONS_DATASET, {
@@ -48,21 +49,21 @@ async def fetch_all(house_number: str, street_name: str, borough: str) -> dict:
                 f"AND streetname LIKE '%{street_upper}%' "
                 f"AND violationstatus='Open'"
             ),
-            "$limit": 100,
+            "$limit": limit,
         })
         complaints_coro = _fetch_dataset(client, DOB_COMPLAINTS_DATASET, {
             "$where": (
                 f"house_number LIKE '{hn_numeric}%' "
                 f"AND house_street LIKE '%{street_upper}%'"
             ),
-            "$limit": 100,
+            "$limit": limit,
         })
         litigations_coro = _fetch_dataset(client, HPD_LITIGATIONS_DATASET, {
             "$where": (
                 f"housenumber LIKE '{hn_numeric}%' "
                 f"AND streetname LIKE '%{street_upper}%'"
             ),
-            "$limit": 50,
+            "$limit": lit_limit,
         })
 
         results = await asyncio.gather(violations_coro, complaints_coro, litigations_coro)

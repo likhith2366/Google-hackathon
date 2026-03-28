@@ -6,6 +6,18 @@ Built for the Google Gemini Hackathon.
 
 ---
 
+## Try It Now — Just Call
+
+**No internet. No chatbox. No app. Just call.**
+
+> **+1 (260) 346-6336**
+
+Speak directly to the AI NYC tenant advocate over a real phone call. Tell it the address you're considering, and it will look up violations, bed bug complaints, litigation history, and more — then answer your questions in plain English, just like talking to a knowledgeable friend who has your back.
+
+Perfect for when you're standing outside an apartment and want answers on the spot.
+
+---
+
 ## What It Does
 
 BeforeYouSign lets you enter any NYC address and instantly get:
@@ -14,6 +26,36 @@ BeforeYouSign lets you enter any NYC address and instantly get:
 - A risk score (Low / Moderate / High) based on violation severity
 - Actionable advice — suggested rent abatements or lease riders for problematic conditions
 - A follow-up chat with the AI advocate to dig deeper
+
+---
+
+## Voice Feature — Call the NYC Agent
+
+BeforeYouSign works entirely over a phone call, powered by Twilio and Google Gemini Live API.
+
+### How It Works
+
+```
+You call +1 (260) 346-6336
+  → Twilio receives the call and streams audio to our backend (Cloud Run)
+  → Backend bridges the audio stream to Gemini Live API in real time
+  → Gemini acts as an NYC tenant advocate — it listens to your address
+     and any questions you have, queries the NYC Open Data APIs live,
+     and speaks the results back to you
+  → You hear a clear, conversational answer about violations,
+     bed bug complaints, litigation history, and more
+```
+
+### Why This Matters
+
+| Scenario | BeforeYouSign Voice |
+|---|---|
+| Standing outside an apartment with no laptop | Just call |
+| No time to browse a website | Just call |
+| Want to ask follow-up questions naturally | Just call |
+| Helping a family member who isn't tech-savvy | Just call |
+
+No app download. No account. No screen needed. The full power of the NYC tenant advocate in a single phone call.
 
 ---
 

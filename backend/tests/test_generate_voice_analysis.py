@@ -41,3 +41,17 @@ async def test_generate_voice_analysis_includes_address(sample_data):
         result = await generate_voice_analysis(address, violations, complaints, litigations, risk)
 
     assert "123" in result or "Main Street" in result or "Brooklyn" in result
+
+
+@pytest.mark.asyncio
+async def test_generate_voice_analysis_handles_none_response(sample_data):
+    address, violations, complaints, litigations, risk = sample_data
+    mock_response = MagicMock()
+    mock_response.text = None
+
+    with patch("app.services.gemini_service._genai_client") as mock_client:
+        mock_client.aio.models.generate_content = AsyncMock(return_value=mock_response)
+        result = await generate_voice_analysis(address, violations, complaints, litigations, risk)
+
+    assert isinstance(result, str)
+    assert len(result) > 0

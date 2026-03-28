@@ -166,8 +166,7 @@ async def generate_voice_analysis(
         f"HPD Litigations ({len(litigations)}): {litigations[:3]}\n\n"
     )
     prompt = (
-        "You are a pro-tenant legal advocate speaking over the phone. "
-        "Based on the following building data, give a concise spoken-word analysis. "
+        "Based on the following building data, give a concise spoken-word analysis for a phone call. "
         "Use plain sentences — no bullets, no markdown. Lead with the risk level. "
         "Flag critical violations. Mention litigation history if relevant. "
         "Keep it under 60 seconds of speech.\n\n"
@@ -176,6 +175,12 @@ async def generate_voice_analysis(
     response = await _genai_client.aio.models.generate_content(
         model=settings.GEMINI_MODEL_NAME,
         contents=prompt,
-        config=types.GenerateContentConfig(temperature=0.3),
+        config=types.GenerateContentConfig(
+            temperature=0.3,
+            system_instruction=_ADVOCATE_PROMPT,
+        ),
     )
-    return response.text
+    text = response.text
+    if not text:
+        return "I was unable to generate a building summary at this time. Please try again."
+    return text

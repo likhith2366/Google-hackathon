@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.routers.voice import router as voice_router
 from app.models.schemas import (
     AnalyzeResponse,
     ChatRequest,
@@ -23,6 +24,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(voice_router)
 
 
 @app.post("/analyze", response_model=AnalyzeResponse)

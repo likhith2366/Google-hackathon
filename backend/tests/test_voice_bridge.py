@@ -62,8 +62,10 @@ async def test_handle_tool_call_lookup_building_returns_risk():
         "litigations": [],
         "data_warning": False,
     }
+    fake_summary = "Moderate risk building. One Class C violation on record."
 
-    with patch("app.services.voice_bridge.fetch_all", new=AsyncMock(return_value=mock_data)):
+    with patch("app.services.voice_bridge.fetch_all", new=AsyncMock(return_value=mock_data)), \
+         patch("app.services.voice_bridge.generate_voice_analysis", new=AsyncMock(return_value=fake_summary)):
         await bridge._handle_tool_call(mock_tool_call, mock_live_session)
 
     mock_live_session.send.assert_called_once()
@@ -72,7 +74,8 @@ async def test_handle_tool_call_lookup_building_returns_risk():
     assert sent_input.function_responses[0].name == "lookup_building"
     result = sent_input.function_responses[0].response
     assert result["risk_level"] == "Moderate"  # 1x Class C = score 4, threshold High=5
-    assert result["violations_count"] == 1
+    assert result["summary"] == fake_summary
+    assert "data_warning" in result
 
 
 @pytest.mark.asyncio
@@ -101,8 +104,10 @@ async def test_handle_tool_call_data_warning_propagated():
         "litigations": [],
         "data_warning": True,
     }
+    fake_summary = "No data available for this building."
 
-    with patch("app.services.voice_bridge.fetch_all", new=AsyncMock(return_value=mock_data)):
+    with patch("app.services.voice_bridge.fetch_all", new=AsyncMock(return_value=mock_data)), \
+         patch("app.services.voice_bridge.generate_voice_analysis", new=AsyncMock(return_value=fake_summary)):
         await bridge._handle_tool_call(mock_tool_call, mock_live_session)
 
     sent_input = mock_live_session.send.call_args.kwargs["input"]

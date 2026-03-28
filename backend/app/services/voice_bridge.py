@@ -9,6 +9,8 @@ from fastapi import WebSocket
 from google.genai import types
 
 from app.core.config import settings
+from app.models.schemas import ParsedAddress
+from app.services.gemini_service import generate_voice_analysis
 from app.services.nyc_service import fetch_all
 from app.services.risk_service import compute_risk
 
@@ -138,7 +140,7 @@ class VoiceBridge:
                             }))
 
     async def _handle_tool_call(self, tool_call, live_session) -> None:
-        """Execute lookup_building and return results to Gemini Live."""
+        """Execute lookup_building, generate spoken summary, return to Gemini Live."""
         responses = []
         for fc in tool_call.function_calls:
             if fc.name == "lookup_building":
@@ -159,15 +161,21 @@ class VoiceBridge:
                         "data_warning": True,
                     }
                 risk = compute_risk(data["violations"], data["litigations"])
+                address = ParsedAddress(
+                    house_number=args["house_number"],
+                    street_name=args["street_name"],
+                    borough=args["borough"],
+                )
+                summary = await generate_voice_analysis(
+                    address=address,
+                    violations=data["violations"],
+                    complaints=data["complaints"],
+                    litigations=data["litigations"],
+                    risk_profile=risk,
+                )
                 result = {
+                    "summary": summary,
                     "risk_level": risk.caution_level,
-                    "risk_score": risk.score,
-                    "risk_reasons": risk.reasons,
-                    "violations_count": len(data["violations"]),
-                    "complaints_count": len(data["complaints"]),
-                    "litigations_count": len(data["litigations"]),
-                    "violations_sample": data["violations"][:5],
-                    "litigations_sample": data["litigations"][:3],
                     "data_warning": data["data_warning"],
                 }
                 responses.append(

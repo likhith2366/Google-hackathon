@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     NYC_OPEN_DATA_KEY_ID: str = ""
     NYC_OPEN_DATA_KEY_SECRET: str = ""
     GEMINI_MODEL_NAME: str = "gemini-2.5-flash"
+    GEMINI_LIVE_MODEL_NAME: str = "gemini-2.0-flash-live-001"
+    TWILIO_AUTH_TOKEN: str = ""
     PORT: int = 8080
 
 

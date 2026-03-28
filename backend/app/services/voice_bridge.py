@@ -151,7 +151,7 @@ class VoiceBridge:
                             house_number=args["house_number"],
                             street_name=args["street_name"],
                             borough=args["borough"],
-                            limit=20,
+                            limit=100,
                         ),
                         timeout=6.0,
                     )
@@ -167,12 +167,16 @@ class VoiceBridge:
                     borough=args["borough"],
                 )
                 try:
-                    summary = await generate_voice_analysis(
-                        address=address,
-                        violations=data["violations"],
-                        complaints=data["complaints"],
-                        litigations=data["litigations"],
-                        risk_profile=risk,
+                    summary = await asyncio.wait_for(
+                        generate_voice_analysis(
+                            address=address,
+                            violations=data["violations"],
+                            complaints=data["complaints"],
+                            litigations=data["litigations"],
+                            risk_profile=risk,
+                            system_instruction_text=_VOICE_PROMPT,
+                        ),
+                        timeout=10.0,
                     )
                 except Exception:
                     summary = (

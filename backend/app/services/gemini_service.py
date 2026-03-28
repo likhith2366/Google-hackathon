@@ -149,6 +149,7 @@ async def generate_voice_analysis(
     complaints: list[dict],
     litigations: list[dict],
     risk_profile: RiskProfile,
+    system_instruction_text: str | None = None,
 ) -> str:
     """
     Generate a concise spoken-word summary for the voice interface.
@@ -177,7 +178,7 @@ async def generate_voice_analysis(
         contents=prompt,
         config=types.GenerateContentConfig(
             temperature=0.3,
-            system_instruction=_ADVOCATE_PROMPT,
+            system_instruction=system_instruction_text or _ADVOCATE_PROMPT,
         ),
     )
     text = response.text

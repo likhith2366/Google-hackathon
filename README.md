@@ -4,8 +4,13 @@ An AI-powered NYC tenant advocate that analyzes public building data and gives r
 
 Built for the Google Gemini Hackathon.
 
-**Contributor:** Yashwanth Kasanneni
 
+## Contributors
+
+- Jay Shiurkar - jayshiurkar@gmail.com
+- Nihal Ajayakumar - nihal.ajayakumar@gmail.com
+- Likhith Vardhan Goruputi - g.likhithvardhan@gmail.com
+- Yashwanth Kasanneni - yashwanth292003@gmail.com
 ---
 
 ## Try It Now — Just Call

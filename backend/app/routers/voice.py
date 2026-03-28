@@ -3,8 +3,10 @@ import hashlib
 import hmac
 import logging
 
+import google.genai as genai
 from fastapi import APIRouter, HTTPException, Request, WebSocket
 from fastapi.responses import Response
+from google.genai import types
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +26,19 @@ def _validate_twilio_signature(
     mac = hmac.new(auth_token.encode(), s.encode(), hashlib.sha1)
     expected = base64.b64encode(mac.digest()).decode()
     return hmac.compare_digest(expected, signature)
+
+
+@router.get("/debug-models")
+async def debug_models():
+    """List models available to the configured API key (for debugging)."""
+    client = genai.Client(
+        api_key=settings.GOOGLE_API_KEY,
+        vertexai=False,
+        http_options=types.HttpOptions(api_version="v1beta"),
+    )
+    models = [m.name async for m in await client.aio.models.list()]
+    live_models = [m for m in models if "live" in m.lower() or "flash" in m.lower()]
+    return {"all_count": len(models), "live_or_flash": live_models}
 
 
 @router.post("/incoming")

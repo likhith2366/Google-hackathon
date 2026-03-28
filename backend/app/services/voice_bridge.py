@@ -84,7 +84,7 @@ class VoiceBridge:
         self._client = genai.Client(
             api_key=settings.GOOGLE_API_KEY,
             vertexai=False,
-            http_options={"api_version": "v1alpha"},
+            http_options=types.HttpOptions(api_version="v1alpha"),
         )
         self._stream_sid: str | None = None
         self._ratecv_state = None

@@ -81,7 +81,11 @@ class VoiceBridge:
     def __init__(self) -> None:
         # Gemini Live requires Developer API (not Vertex AI); vertexai=False
         # overrides the GOOGLE_GENAI_USE_VERTEXAI=1 env var set by config.py
-        self._client = genai.Client(api_key=settings.GOOGLE_API_KEY, vertexai=False)
+        self._client = genai.Client(
+            api_key=settings.GOOGLE_API_KEY,
+            vertexai=False,
+            http_options={"api_version": "v1alpha"},
+        )
         self._stream_sid: str | None = None
         self._ratecv_state = None
 

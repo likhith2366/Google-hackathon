@@ -39,8 +39,9 @@ async def incoming_call(request: Request):
             raise HTTPException(status_code=403, detail="Invalid Twilio signature")
 
     host = request.headers.get("host", request.url.netloc)
-    scheme = "wss" if request.url.scheme == "https" else "ws"
-    stream_url = f"{scheme}://{host}/voice/stream"
+    proto = request.headers.get("x-forwarded-proto", request.url.scheme)
+    ws_scheme = "wss" if proto == "https" else "ws"
+    stream_url = f"{ws_scheme}://{host}/voice/stream"
 
     twiml = (
         '<?xml version="1.0" encoding="UTF-8"?>'

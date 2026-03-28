@@ -166,17 +166,24 @@ class VoiceBridge:
                     street_name=args["street_name"],
                     borough=args["borough"],
                 )
-                summary = await generate_voice_analysis(
-                    address=address,
-                    violations=data["violations"],
-                    complaints=data["complaints"],
-                    litigations=data["litigations"],
-                    risk_profile=risk,
-                )
+                try:
+                    summary = await generate_voice_analysis(
+                        address=address,
+                        violations=data["violations"],
+                        complaints=data["complaints"],
+                        litigations=data["litigations"],
+                        risk_profile=risk,
+                    )
+                except Exception:
+                    summary = (
+                        f"The risk level for this building is {risk.caution_level}. "
+                        "I was unable to generate a detailed summary. "
+                        "Please check NYC Housing Connect or call 311 for more information."
+                    )
                 result = {
                     "summary": summary,
                     "risk_level": risk.caution_level,
-                    "data_warning": data["data_warning"],
+                    "data_warning": data.get("data_warning", False),
                 }
                 responses.append(
                     types.FunctionResponse(

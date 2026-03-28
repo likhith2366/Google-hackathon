@@ -69,14 +69,14 @@ Update this table as tasks complete. In a new session, check here first.
 
 | Task | Status | Notes |
 |---|---|---|
-| Task 1: Scaffold | ⬜ Not started | |
-| Task 2: core/ | ⬜ Not started | depends on Task 1 |
-| Task 3: models/schemas.py | ⬜ Not started | depends on Task 1 |
-| Task 4: advocate_prompt.txt | ⬜ Not started | depends on Task 1 |
-| Task 5: nyc_service.py | ⬜ Not started | depends on Tasks 2, 3 |
-| Task 6: gemini_service.py | ⬜ Not started | depends on Tasks 2, 3, 4 |
-| Task 7: main.py | ⬜ Not started | depends on Tasks 5, 6 |
-| Task 8: Dockerfile + deps | ⬜ Not started | depends on Task 7 |
+| Task 1: Scaffold | ✅ Complete | |
+| Task 2: core/ | ✅ Complete | depends on Task 1 |
+| Task 3: models/schemas.py | ✅ Complete | depends on Task 1 |
+| Task 4: advocate_prompt.txt | ✅ Complete | depends on Task 1 |
+| Task 5: nyc_service.py | ✅ Complete | depends on Tasks 2, 3 |
+| Task 6: gemini_service.py | ✅ Complete | depends on Tasks 2, 3, 4 |
+| Task 7: main.py | ✅ Complete | depends on Tasks 5, 6 |
+| Task 8: Dockerfile + deps | ✅ Complete | depends on Task 7 |
 
 **Statuses:** ⬜ Not started → 🔄 In progress → ✅ Complete
 

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
+import ReactMarkdown from 'react-markdown'
 
 export type ChatMessage = {
   role: 'user' | 'advocate'
@@ -12,8 +13,8 @@ interface Props {
 }
 
 export default function ChatPanel({ messages, onSend, sending }: Props) {
-  const [input, setInput] = useState('')
-  const bottomRef = useRef<HTMLDivElement>(null)
+  const [input,     setInput]     = useState('')
+  const bottomRef                 = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -31,27 +32,32 @@ export default function ChatPanel({ messages, onSend, sending }: Props) {
   return (
     <div className="chat-panel">
       <div className="chat-header">
-        <span className="chat-label">Follow-up Questions</span>
+        <span className="chat-eyebrow">Tenant Advocate</span>
+        <span className="chat-label">Ask anything</span>
       </div>
 
       <div className="chat-messages">
         {messages.length === 0 && (
           <p className="chat-empty">
-            Ask anything about this property — lease negotiation, your rights, what violations mean…
+            Ask about your rights, what violations mean, how to negotiate
+            your lease, or anything else about this building.
           </p>
         )}
+
         {messages.map((msg, i) => (
           <div key={i} className={`chat-bubble ${msg.role === 'user' ? 'bubble-user' : 'bubble-advocate'}`}>
             {msg.role === 'advocate' && (
               <span className="bubble-label">Advocate</span>
             )}
             <div className="bubble-text">
-              {msg.text.split('\n').map((line, j) =>
-                line.trim() ? <p key={j}>{line}</p> : null,
-              )}
+              {msg.role === 'advocate'
+                ? <ReactMarkdown>{msg.text}</ReactMarkdown>
+                : msg.text
+              }
             </div>
           </div>
         ))}
+
         {sending && (
           <div className="chat-bubble bubble-advocate">
             <span className="bubble-label">Advocate</span>

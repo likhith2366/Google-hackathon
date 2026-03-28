@@ -1,60 +1,71 @@
 import ReactMarkdown from 'react-markdown'
 import type { AnalyzeResponse } from '../api'
 
-interface Props {
-  data: AnalyzeResponse
-}
+interface Props { data: AnalyzeResponse }
 
-const LEVEL_CLASS: Record<string, string> = {
-  High: 'badge-high',
-  Moderate: 'badge-moderate',
-  Low: 'badge-low',
+const VERDICT_CLASS: Record<string, string> = {
+  High:     'verdict-high',
+  Moderate: 'verdict-moderate',
+  Low:      'verdict-low',
 }
 
 export default function SummaryCard({ data }: Props) {
   const { address, risk_profile, summary, violations, complaints, litigations, data_warning } = data
-  const badgeClass = LEVEL_CLASS[risk_profile.caution_level] ?? 'badge-low'
+  const verdictClass = VERDICT_CLASS[risk_profile.caution_level] ?? 'verdict-low'
+
+  const vCount = violations.length
+  const cCount = complaints.length
+  const lCount = litigations.length
 
   return (
     <div className="summary-card">
-      <div className="summary-header">
-        <div className="summary-address">
-          <span className="address-icon">📍</span>
-          <span>
-            {address.house_number} {address.street_name},{' '}
-            <strong>{address.borough}</strong>
-          </span>
-        </div>
-        <span className={`risk-badge ${badgeClass}`}>{risk_profile.caution_level} Risk</span>
+      <p className="address-kicker">Building Report · {address.borough}</p>
+
+      <div className="verdict-row">
+        <h2 className="summary-address-text">
+          {address.house_number} {address.street_name}
+        </h2>
+        <span className={`risk-verdict ${verdictClass}`}>
+          {risk_profile.caution_level} Risk
+        </span>
       </div>
 
-      {data_warning && (
-        <div className="data-warning">
-          ⚠️ Some data sources were unavailable. Results may be incomplete.
-        </div>
-      )}
+      <hr className="summary-rule" />
 
-      <div className="counts-row">
-        <span className="count-item">
-          <strong>{violations.length}</strong> violation{violations.length !== 1 ? 's' : ''}
-        </span>
-        <span className="count-sep">·</span>
-        <span className="count-item">
-          <strong>{complaints.length}</strong> complaint{complaints.length !== 1 ? 's' : ''}
-        </span>
-        <span className="count-sep">·</span>
-        <span className="count-item">
-          <strong>{litigations.length}</strong> litigation{litigations.length !== 1 ? 's' : ''}
-        </span>
+      <div className="stats-row">
+        <div className="stat-item">
+          <span className={`stat-number ${vCount > 10 ? 'is-high' : vCount > 3 ? 'is-moderate' : ''}`}>
+            {vCount}
+          </span>
+          <span className="stat-label">Violations</span>
+        </div>
+        <div className="stat-item">
+          <span className={`stat-number ${cCount > 20 ? 'is-high' : cCount > 5 ? 'is-moderate' : ''}`}>
+            {cCount}
+          </span>
+          <span className="stat-label">Complaints</span>
+        </div>
+        <div className="stat-item">
+          <span className={`stat-number ${lCount > 0 ? 'is-moderate' : ''}`}>
+            {lCount}
+          </span>
+          <span className="stat-label">Litigations</span>
+        </div>
       </div>
 
       {risk_profile.reasons.length > 0 && (
         <ul className="reasons-list">
-          {risk_profile.reasons.map((r, i) => (
-            <li key={i}>{r}</li>
-          ))}
+          {risk_profile.reasons.map((r, i) => <li key={i}>{r}</li>)}
         </ul>
       )}
+
+      {data_warning && (
+        <p className="data-warning">
+          ⚠ Some data sources were unavailable — results may be incomplete.
+        </p>
+      )}
+
+      <hr className="summary-divider" />
 
       <div className="summary-body">
         <ReactMarkdown>{summary}</ReactMarkdown>

@@ -28,7 +28,10 @@ async def incoming_call(request: Request):
     """TwiML webhook — Twilio calls this when a call arrives."""
     if settings.TWILIO_AUTH_TOKEN:
         signature = request.headers.get("X-Twilio-Signature", "")
-        url = str(request.url)
+        # Cloud Run sits behind a TLS-terminating proxy — reconstruct the public HTTPS URL
+        proto = request.headers.get("x-forwarded-proto", request.url.scheme)
+        host = request.headers.get("host", request.url.netloc)
+        url = f"{proto}://{host}{request.url.path}"
         form = dict(await request.form())
         if not _validate_twilio_signature(
             settings.TWILIO_AUTH_TOKEN, url, form, signature

@@ -1,9 +1,12 @@
 import base64
 import hashlib
 import hmac
+import logging
 
 from fastapi import APIRouter, HTTPException, Request, WebSocket
 from fastapi.responses import Response
+
+logger = logging.getLogger(__name__)
 
 from app.core.config import settings
 from app.services.voice_bridge import VoiceBridge
@@ -59,8 +62,8 @@ async def voice_stream(websocket: WebSocket):
     bridge = VoiceBridge()
     try:
         await bridge.run(websocket)
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.exception("VoiceBridge error: %s", exc)
     finally:
         try:
             await websocket.close()

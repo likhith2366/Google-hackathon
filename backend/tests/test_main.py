@@ -73,15 +73,15 @@ def test_chat_returns_404_on_unknown_session():
 
 
 def test_compute_risk_high_on_class_c():
-    from app.main import _compute_risk
+    from app.services.risk_service import compute_risk
     violations = [{"class": "C"}, {"class": "C"}]
-    rp = _compute_risk(violations, [])
+    rp = compute_risk(violations, [])
     assert rp.caution_level == "High"
     assert rp.score >= 5
 
 
 def test_compute_risk_low_on_no_violations():
-    from app.main import _compute_risk
-    rp = _compute_risk([], [])
+    from app.services.risk_service import compute_risk
+    rp = compute_risk([], [])
     assert rp.caution_level == "Low"
     assert rp.score == 0

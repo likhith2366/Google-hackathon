@@ -7,7 +7,9 @@ class Settings(BaseSettings):
 
     PROJECT_ID: str
     LOCATION: str = "us-central1"
-    NYC_OPEN_DATA_TOKEN: str
+    NYC_OPEN_DATA_TOKEN: str = ""
+    NYC_OPEN_DATA_KEY_ID: str = ""
+    NYC_OPEN_DATA_KEY_SECRET: str = ""
     GEMINI_MODEL_NAME: str = "gemini-2.5-flash"
     PORT: int = 8080
 

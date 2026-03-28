@@ -1,7 +1,7 @@
 # Socrata dataset identifiers (NYC Open Data)
-HPD_VIOLATIONS_DATASET = "wv7w-wfz2"
-DOB_COMPLAINTS_DATASET = "8792-6kh6"
-HPD_LITIGATIONS_DATASET = "63ge-vje6"
+HPD_VIOLATIONS_DATASET = "wvxf-dwi5"
+DOB_COMPLAINTS_DATASET = "eabe-havv"
+HPD_LITIGATIONS_DATASET = "59kj-x8nc"
 SOCRATA_BASE_URL = "https://data.cityofnewyork.us/resource"
 
 # Risk scoring weights

@@ -1,3 +1,4 @@
+import ReactMarkdown from 'react-markdown'
 import type { AnalyzeResponse } from '../api'
 
 interface Props {
@@ -56,9 +57,7 @@ export default function SummaryCard({ data }: Props) {
       )}
 
       <div className="summary-body">
-        {summary.split('\n').map((line, i) =>
-          line.trim() ? <p key={i}>{line}</p> : null,
-        )}
+        <ReactMarkdown>{summary}</ReactMarkdown>
       </div>
     </div>
   )

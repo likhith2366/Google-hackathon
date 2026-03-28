@@ -14,9 +14,8 @@ async def _fetch_dataset(
 ) -> tuple[list[dict], bool]:
     """Fetch one Socrata dataset. Returns (data, errored)."""
     url = f"{SOCRATA_BASE_URL}/{dataset_id}.json"
-    headers = {"X-App-Token": settings.NYC_OPEN_DATA_TOKEN}
     try:
-        response = await client.get(url, params=params, headers=headers, timeout=10.0)
+        response = await client.get(url, params=params, timeout=10.0)
         response.raise_for_status()
         return response.json(), False
     except Exception:
@@ -36,12 +35,16 @@ async def fetch_all(house_number: str, street_name: str, borough: str) -> dict:
         }
     """
     street_upper = street_name.upper()
-    hn = house_number
+    hn = house_number.upper()
+    # Strip letter suffix for DOB complaints (stores plain number e.g. "3333")
+    hn_numeric = hn.rstrip("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
-    async with httpx.AsyncClient() as client:
+    auth = (settings.NYC_OPEN_DATA_KEY_ID, settings.NYC_OPEN_DATA_KEY_SECRET)
+
+    async with httpx.AsyncClient(auth=auth) as client:
         violations_coro = _fetch_dataset(client, HPD_VIOLATIONS_DATASET, {
             "$where": (
-                f"housenumber='{hn}' "
+                f"housenumber LIKE '{hn_numeric}%' "
                 f"AND streetname LIKE '%{street_upper}%' "
                 f"AND violationstatus='Open'"
             ),
@@ -49,14 +52,14 @@ async def fetch_all(house_number: str, street_name: str, borough: str) -> dict:
         })
         complaints_coro = _fetch_dataset(client, DOB_COMPLAINTS_DATASET, {
             "$where": (
-                f"housenumber='{hn}' "
-                f"AND streetname LIKE '%{street_upper}%'"
+                f"house_number LIKE '{hn_numeric}%' "
+                f"AND house_street LIKE '%{street_upper}%'"
             ),
             "$limit": 100,
         })
         litigations_coro = _fetch_dataset(client, HPD_LITIGATIONS_DATASET, {
             "$where": (
-                f"housenumber='{hn}' "
+                f"housenumber LIKE '{hn_numeric}%' "
                 f"AND streetname LIKE '%{street_upper}%'"
             ),
             "$limit": 50,

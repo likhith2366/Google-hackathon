@@ -294,7 +294,21 @@ body {
   border-top: 1px solid var(--border);
   padding-top: 16px;
 }
-.summary-body p + p { margin-top: 10px; }
+.summary-body p { margin-top: 10px; }
+.summary-body h1, .summary-body h2, .summary-body h3 {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin: 18px 0 6px;
+}
+.summary-body ul, .summary-body ol {
+  padding-left: 20px;
+  margin: 8px 0;
+}
+.summary-body li { margin: 4px 0; }
+.summary-body strong { color: var(--text); font-weight: 600; }
 
 /* ── Chat panel ───────────────────────────────────────────── */
 .chat-panel {

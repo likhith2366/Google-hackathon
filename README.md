@@ -4,6 +4,8 @@ An AI-powered NYC tenant advocate that analyzes public building data and gives r
 
 Built for the Google Gemini Hackathon.
 
+**Contributor:** Yashwanth Kasanneni
+
 ---
 
 ## What It Does

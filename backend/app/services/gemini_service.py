@@ -141,3 +141,41 @@ async def chat(client_token: str, message: str) -> str:
                     reply = part.text
 
     return reply
+
+
+async def generate_voice_analysis(
+    address: ParsedAddress,
+    violations: list[dict],
+    complaints: list[dict],
+    litigations: list[dict],
+    risk_profile: RiskProfile,
+) -> str:
+    """
+    Generate a concise spoken-word summary for the voice interface.
+    No ADK session is created — voice follow-up is handled by Gemini Live.
+
+    Returns:
+        summary_text suitable for reading aloud over the phone
+    """
+    context = (
+        f"Address: {address.house_number} {address.street_name}, {address.borough}\n\n"
+        f"Risk Level: {risk_profile.caution_level} (score: {risk_profile.score})\n"
+        f"Reasons: {', '.join(risk_profile.reasons) if risk_profile.reasons else 'None'}\n\n"
+        f"HPD Violations ({len(violations)} open): {violations[:5]}\n\n"
+        f"DOB Complaints ({len(complaints)}): {complaints[:5]}\n\n"
+        f"HPD Litigations ({len(litigations)}): {litigations[:3]}\n\n"
+    )
+    prompt = (
+        "You are a pro-tenant legal advocate speaking over the phone. "
+        "Based on the following building data, give a concise spoken-word analysis. "
+        "Use plain sentences — no bullets, no markdown. Lead with the risk level. "
+        "Flag critical violations. Mention litigation history if relevant. "
+        "Keep it under 60 seconds of speech.\n\n"
+        + context
+    )
+    response = await _genai_client.aio.models.generate_content(
+        model=settings.GEMINI_MODEL_NAME,
+        contents=prompt,
+        config=types.GenerateContentConfig(temperature=0.3),
+    )
+    return response.text

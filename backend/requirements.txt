@@ -3,3 +3,6 @@ uvicorn
 pandas
 google-genai
 pydantic
+python-dotenv
+twilio
+python-multipart
